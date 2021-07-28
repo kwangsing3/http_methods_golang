@@ -15,6 +15,11 @@
 | TRACE   |--|
 | PATCH   |--| 
 
+| OPERATE |  STATUS |   
+| --------|---------|
+| READ  FILE   |√|
+| WRITE FILE   |√|
+
 # Install
 ```sh
 go get github.com/kwangsing3/http_methods_golang

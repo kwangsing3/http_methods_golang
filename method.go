@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"path"
 )
 
 //http method:  GET、POST、PUT、DELETE, change here if needed
@@ -62,4 +64,35 @@ func POST(url string, query []byte) ([]byte, error) {
 		return nil, err
 	}
 	return sitemap, nil
+}
+
+//ReadFile: Standard Read file operate. <return> []byte.
+func READFile(inputPath string) ([]byte, error) {
+
+	if path.IsAbs(inputPath) {
+		return nil, errors.New(`Read file path: emtpy`)
+	}
+
+	file, err := os.Open(path.Join(inputPath))
+	defer file.Close()
+	if err != nil {
+		return nil, errors.New(`Read file path: ` + err.Error())
+	}
+	byteData, readErr := ioutil.ReadAll(file)
+	if readErr != nil {
+		return nil, errors.New(`Read file path: ` + readErr.Error())
+	}
+	return byteData, nil
+}
+
+//WriteFile:
+func WRITEFile(inputPath string, data []byte) error {
+
+	file, err := os.Create(path.Join(inputPath))
+	if err != nil {
+		return errors.New(`Write file path: ` + err.Error())
+	}
+	defer file.Close()
+	file.Write(data)
+	return nil
 }
