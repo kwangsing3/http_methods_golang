@@ -15,7 +15,7 @@ import (
 
 //GET: To get data from GET method, need to wait for respone
 //<url>: request address.
-func GET(url string) ([]byte, error) {
+func GET(url string, header map[string]string) ([]byte, error) {
 	if url == "" {
 		return nil, errors.New("GET empty URL")
 	} else if url == "empty" { //return null
@@ -38,6 +38,10 @@ func GET(url string) ([]byte, error) {
 		return nil, err
 	}
 	//req.Header.Add("If-None-Match", `W/"wyzzy"`)
+	for key, value := range header {
+		req.Header.Add(key, value)
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println(err)
@@ -55,11 +59,26 @@ func GET(url string) ([]byte, error) {
 //POST: To get data from POST method, need to wait for respone
 //<url>: request address.
 //<query>: The query you want to do, mostly are json, depends on the server you request.
-func POST(url string, query []byte) ([]byte, error) {
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(query))
+func POST(url string, header map[string]string, query []byte) ([]byte, error) {
+
+	client := &http.Client{}
+	defer client.CloseIdleConnections()
+	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return nil, err
 	}
+	//req.Header.Add("If-None-Match", `W/"wyzzy"`)
+	for key, value := range header {
+		req.Header.Add(key, value)
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer resp.Body.Close()
 	sitemap, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
@@ -69,7 +88,7 @@ func POST(url string, query []byte) ([]byte, error) {
 }
 
 //DELETE: http Delete method request
-func DELETE(url string) ([]byte, error) {
+func DELETE(url string, header map[string]string, query []byte) ([]byte, error) {
 	if url == "" {
 		return nil, errors.New("GET empty URL")
 	} else if url == "empty" { //return null
@@ -78,10 +97,14 @@ func DELETE(url string) ([]byte, error) {
 
 	client := &http.Client{}
 	defer client.CloseIdleConnections()
-	req, err := http.NewRequest("DELETE", url, nil)
+	req, err := http.NewRequest("DELETE", url, bytes.NewBuffer(query))
 	if err != nil {
 		log.Println(err)
 		return nil, err
+	}
+	//req.Header.Add("If-None-Match", `W/"wyzzy"`)
+	for key, value := range header {
+		req.Header.Add(key, value)
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -98,7 +121,7 @@ func DELETE(url string) ([]byte, error) {
 }
 
 //PUT: http Delete method request
-func PUT(url string, content string) ([]byte, error) {
+func PUT(url string, header map[string]string, content string) ([]byte, error) {
 	if url == "" {
 		return nil, errors.New("GET empty URL")
 	} else if url == "empty" { //return null
@@ -112,6 +135,10 @@ func PUT(url string, content string) ([]byte, error) {
 	if err != nil {
 		log.Println(err)
 		return nil, err
+	}
+	//req.Header.Add("If-None-Match", `W/"wyzzy"`)
+	for key, value := range header {
+		req.Header.Add(key, value)
 	}
 	resp, err := client.Do(req)
 	if err != nil {
