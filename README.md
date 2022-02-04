@@ -8,8 +8,8 @@
 | GET     |√|
 | POST    |√|
 | HEAD    |--|
-| PUT     |--|
-| DELETE  |--|
+| PUT     |√|
+| DELETE  |√|
 | CONNECT |--|
 | OPTIONS |--|
 | TRACE   |--|
@@ -47,6 +47,16 @@ func GET(url string) ([]byte, error)
 func POST(url string, query []byte) ([]byte, error) 
 ```
 
+* ## DELETE
+``` go
+//DELETE: http Delete method request
+func DELETE(url string) ([]byte, error) 
+```
+* ## PUT
+``` go
+//PUT: http Delete method request
+func PUT(url string, content string) ([]byte, error) 
+```
 # Example
 ```go
 package main
@@ -60,39 +70,25 @@ import (
 func main() {
 
 	/***GET request***/
-	resultGET, errG := HMG.GET("https://example.com")
+	dataGET, errG := HMG.GET("https://example.com")
 	if errG != nil {
 		fmt.Println(errG.Error())
-	} else {
-		fmt.Println(string(resultGET))
-	}
+	} 
 
-
-	// Multi thread example
-	go func() {
-		resultGET, errG := HMG.GET("https://example.com")
-		if errG != nil {
-			fmt.Println(errG.Error())
-		} else {
-			fmt.Println(string(resultGET))
-		}
-	}()
-
-
+	fmt.Println(string(dataGET))
 	/*** POST request***/
 	query := struct {
 		Msg string
 	}{
 		Msg: `New Message`, //query Struct depends on the server you request.
 	}
-	bytedata, _ := json.Marshal(query)
-	resultPOST, errP := HMG.POST("https://example.com", bytedata)
+	bytequery, _ := json.Marshal(query)
+	dataPOST, errP := HMG.POST("https://example.com", bytequery)
 	if errP != nil {
 		fmt.Println(errP.Error())
-	} else {
-		fmt.Println(string(resultPOST))
-	}
+	} 
 
+	fmt.Println(string(dataPOST))
     return
 }
 
